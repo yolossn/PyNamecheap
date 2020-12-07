@@ -300,7 +300,15 @@ class Api(object):
                 fields_for_one_contact_type[self._tag_without_namespace(contact_detail)] = contact_detail.text
             results[self._tag_without_namespace(contact_type)] = fields_for_one_contact_type
         return results
-
+    
+    # https://www.namecheap.com/support/api/methods/users/get-pricing/
+    def get_tld_register_pricing(self,TLD):
+        xml = self._call('namecheap.users.getPricing',{"ProductName":TLD,"ProductType":"DOMAIN","ActionName":"REGISTER"})
+        xpath = './/{%(ns)s}CommandResponse/{%(ns)s}UserGetPricingResult/{%(ns)s}ProductType/{%(ns)s}ProductCategory/{%(ns)s}Product/{%(ns)s}Price' % {'ns': NAMESPACE}
+        prices = xml.findall(path)
+        prices= [{"duration":int(price.get("Duration")),"price":float(price.get("YourPrice"))} for price in prices if price.get("Currency") == "USD"]
+        return prices
+        
     # https://www.namecheap.com/support/api/methods/domains-dns/set-hosts.aspx
     def domains_dns_setHosts(self, domain, host_records):
         """Sets the DNS host records for a domain.
