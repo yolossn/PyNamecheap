@@ -305,7 +305,7 @@ class Api(object):
     def get_tld_register_pricing(self,TLD):
         xml = self._call('namecheap.users.getPricing',{"ProductName":TLD,"ProductType":"DOMAIN","ActionName":"REGISTER"})
         xpath = './/{%(ns)s}CommandResponse/{%(ns)s}UserGetPricingResult/{%(ns)s}ProductType/{%(ns)s}ProductCategory/{%(ns)s}Product/{%(ns)s}Price' % {'ns': NAMESPACE}
-        prices = xml.findall(path)
+        prices = xml.findall(xpath)
         prices= [{"duration":int(price.get("Duration")),"price":float(price.get("YourPrice"))} for price in prices if price.get("Currency") == "USD"]
         return prices
         
